@@ -4,6 +4,7 @@ import './App.css';
 import Dashboard from './task/dashboard';
 import DashboardAdmin from './adminTask/admin';
 import Auth from './auth/auth'
+
 export const formatDateTime = (date) => {
   if (isNaN(date) || date === null) {
     return '';
@@ -35,7 +36,8 @@ function App() {
       checkboxes: [{id: 0, name: 'teste ', ischecked: false},{id: 1, name: 'teste1', ischecked: false}],
       progress: 0,
       comments:[]
-    },{
+    },
+    {
       id: 2,
       title: "tudo",
       text: "tudo",
@@ -48,7 +50,8 @@ function App() {
       checkboxes: [],
       progress: 0,
       comments:[]
-    },{
+    },
+    {
       id: 3,
       title: "varios",
       text: "varios",
@@ -63,7 +66,7 @@ function App() {
       comments:[]
     },
   ]);
-
+  
   return (
     <Router>
       <Routes>

@@ -31,3 +31,8 @@ input, .TextareaAutosize{
   border-radius: 3px;
   width: 100%;
 }
+
+.ql-toolbar {
+  display: flex;
+  flex-wrap: wrap; /* Permite quebra de linha se necessário */
+}

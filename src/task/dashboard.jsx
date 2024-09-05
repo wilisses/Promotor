@@ -1,11 +1,13 @@
 import { useState } from "react";
-import Task from "./Components/Task/Task";
+import Task from "./components/Task/Task";
 import "../App.css";
 import Search from "./components/Filter/Search";
 import Filter from "./components/Filter/Filter";
 import Modal from "./Components/Modal/Modal";
-import { Link } from 'react-router-dom';
 import {formatDateTime} from '../App'
+import { useNavigate } from 'react-router-dom';
+import {auth} from '../service/firebase'
+import { signOut } from 'firebase/auth';
 
 export const status = {
   0: { name: "Iniciar", cor: "#5cb85c" },
@@ -155,15 +157,22 @@ const Dashboard = ({task, setTask}) => {
     setTask(newTask);
   };
   
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    try {
+      await signOut(auth);
+      navigate('/'); // Navegar após o logout
+      console.log('Usuário desconectado');
+    } catch (error) {
+      console.error('Erro ao desconectar', error);
+    }
+  };
+
   return (
     <div className="app">
+      <button onClick={handleLogout}>voltar</button>
       <h1>Lista de Tarefas</h1>
-      <nav>
-        <ul>
-          <li><Link to="/">Home</Link></li>
-          <li><Link to="/admin">Admin</Link></li>
-        </ul>
-      </nav>
       <Search search={search} setSearch={setSearch} />
       <Filter filter={filter} setFilter={setFilter} setSort={setSort} />
       <div className="task-list">

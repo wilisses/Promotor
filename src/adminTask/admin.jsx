@@ -1,7 +1,9 @@
 
 import TaskForm from "./components/Task/TaskForm";
 import "../App.css";
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import {auth} from '../service/firebase'
+import { signOut } from 'firebase/auth';
 const Admin = ({task, setTask}) => {
   
   const addTask = (title, text, time, checkboxes) => {
@@ -25,16 +27,22 @@ const Admin = ({task, setTask}) => {
     setTask(newTask);
   };
 
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    try {
+      await signOut(auth);
+      navigate('/'); // Navegar após o logout
+      console.log('Usuário desconectado');
+    } catch (error) {
+      console.error('Erro ao desconectar', error);
+    }
+  };
 
   return (
     <div className="app">
+      <button onClick={handleLogout}>voltar</button>
       <h1>Criar Tarefas</h1>
-      <nav>
-        <ul>
-          <li><Link to="/">Home</Link></li>
-          <li><Link to="/admin">Admin</Link></li>
-        </ul>
-      </nav>
       <TaskForm addTask={addTask} />
     </div>
   );

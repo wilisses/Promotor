@@ -14,38 +14,13 @@ import CircularProgressWithLabel from './Progress'
 
 const modules = {
   toolbar: [
-    ['image'],
-    ['bold', ],
-    ['italic'],
-    ['underline'],
-    ['strike'],
-    [{ 'color': [] }], 
-    [{ 'background': [] }],
-    [{ 'size': ['small', false, 'large', 'huge'] }],
-    [{ 'list': 'ordered'}], 
-    [{ 'list': 'bullet' }],
-    [{ 'align': [] }],
-    ['blockquote'], 
-    [ 'code-block'],
-    ['clean']
+    ['image','bold', 'italic' ,'underline', 'strike',{ 'color': [] },{ 'background': [] },{ 'list': 'ordered'}, { 'list': 'bullet' }, { 'align': [] },'blockquote','code-block','clean'],
+ 
   ],
 };
 
 const formats = [
-  'size',
-  'bold',
-  'italic',
-  'underline',
-  'strike',
-  'list',
-  'bullet',
-  'align',
-  'blockquote',
-  'code-block',
-  'image',
-  'color',
-  'background',
-  'clean'
+  'bold','italic','underline','strike','list','bullet','align','blockquote','code-block','image','color','background','clean'
 ];
 
 const Task = ({ task, modal, handleChange, progressChange, commentChange, addComment}) => {
