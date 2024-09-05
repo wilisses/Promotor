@@ -3,6 +3,8 @@ body{
   background-color: #f4f4f4;
   padding: 30px;
   color: #333;
+  margin: 0;
+  padding: 0;
 }
 .app{
   max-width: 600px;
@@ -40,4 +42,13 @@ button:hover{
   opacity: 1;
 }
 
+
+@media (max-width: 768px) {
+  body{
+    padding: 0;
+  }
+  .app{
+    padding: 0;
+  }
+}
 

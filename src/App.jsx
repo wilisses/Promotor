@@ -1,177 +1,79 @@
 import { useState } from "react";
-import Task from "./components/Task/Task";
-import "./App.css";
-import TaskForm from "./components/Task/TaskForm";
-import Search from "./components/Filter/Search";
-import Filter from "./components/Filter/Filter";
-import Modal from "./components/Modal/Modal";
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import './App.css';
+import Dashboard from './task/dashboard';
+import DashboardAdmin from './adminTask/admin';
+import Auth from './auth/auth'
+export const formatDateTime = (date) => {
+  if (isNaN(date) || date === null) {
+    return '';
+  }
+  const day = String(date.getDate()).padStart(2, '0');
+  const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are zero-based
+  const year = date.getFullYear();
+  const hours = String(date.getHours()).padStart(2, '0');
+  const minutes = String(date.getMinutes()).padStart(2, '0');
+  const seconds = String(date.getSeconds()).padStart(2, '0');
 
-export const status = {
-  0: { name: "Iniciar" },
-  1: { name: "Iniciado" },
-  2: { name: "Finalizar" },
-  3: { name: "Finalizado" },
-  4: { name: "Encerrado" },
+  return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
 };
 
+
 function App() {
+
   const [task, setTask] = useState([
     {
       id: 1,
-      text: "nada",
-      category: "Trabalho",
+      title: "nada",
+      text: "<h1>teste</h1><ol><li>teste1</li><li>teste2</li><li>teste3</li><li>teste4</li></ol><p><strong>obs: </strong><em><u>realizar tudo</u></em></p>",
       isCompleted: false,
       status: 0,
-      time: 180000,
-      start: null,
-      end: null,
-      comment: "",
-    },
-    {
-      id: 2,
-      text: "tudo",
-      category: "Pessoal",
-      isCompleted: false,
-      status: 0,
-      time: 1800000,
-      start: null,
-      end: null,
-      comment: "",
-    },
-    {
-      id: 3,
-      text: "varios",
-      category: "Estudos",
-      isCompleted: false,
-      status: 0,
-      time: 900000,
+      time: 60000,
       timeStart: null,
       timeEnd: null,
       comment: "",
+      checkboxes: [{id: 0, name: 'teste ', ischecked: false},{id: 1, name: 'teste1', ischecked: false}],
+      progress: 0,
+      comments:[]
+    },{
+      id: 2,
+      title: "tudo",
+      text: "tudo",
+      isCompleted: false,
+      status: 0,
+      time: 1800000,
+      timeStart: null,
+      timeEnd: null,
+      comment: "",
+      checkboxes: [],
+      progress: 0,
+      comments:[]
+    },{
+      id: 3,
+      title: "varios",
+      text: "varios",
+      isCompleted: false,
+      status: 0,
+      time: 88200000,
+      timeStart: null,
+      timeEnd: null,
+      comment: "",
+      checkboxes: [{id: 0, name: 'teste ', ischecked: false},{id: 1, name: 'teste1', ischecked: true},{id: 2, name: 'teste2', ischecked: true},{id: 3, name: 'teste3', ischecked: false}],
+      progress: 0,
+      comments:[]
     },
   ]);
 
-  const [filter, setFilter] = useState("All");
-  const [sort, setSort] = useState("Asc");
-  const [search, setSearch] = useState("");
-  const [taskCorrent, setTaskCorrent] = useState(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-
-  const addTask = (text, category) => {
-    const newTask = [
-      ...task,
-      {
-        id: Math.floor(Math.random() * 10000),
-        text,
-        category,
-        isCompleted: false,
-        status: 0,
-        time: 900000,
-        start: null,
-        end: null,
-        comment: "",
-      },
-    ];
-    setTask(newTask);
-  };
-
-  const removeTask = (id) => {
-    const newTask = task.filter((task) => task.id !== id);
-    setTask(newTask);
-  };
-
-  const openModal = () => setIsModalOpen(true);
-  const closeModal = () => setIsModalOpen(false);
-
-  const modal = (id, status) => {
-    if (status === 0) {
-      const currentDate = new Date();
-      const newTask = task.map((task) =>
-        task.id === id ? { ...task, status: 1, timeStart: currentDate } : task
-      );
-
-      setTask(newTask);
-    } else {
-      const selectedTask = task.find((task) => task.id === id);
-      setTaskCorrent(selectedTask);
-      openModal();
-    }
-  };
-
-  const completeTask = (id, comment, taskCorrent) => {
-    console.log(id, comment, taskCorrent);
-    const currentDate = new Date();
-    let newTask;
-    if (taskCorrent.status === 1 && comment !== "") {
-      newTask = task.map((task) =>
-        task.id === id
-          ? {
-              ...task,
-              isCompleted: !task.isCompleted,
-              comment: comment,
-              status: 5,
-              timeEnd: currentDate,
-            }
-          : task
-      );
-    } else if (taskCorrent.status === 2) {
-      console.log("AQUI", taskCorrent.status, id);
-      newTask = task.map((task) =>
-        task.id === id
-          ? {
-              ...task,
-              isCompleted: !task.isCompleted,
-              comment: comment,
-              status: 3,
-              timeEnd: currentDate,
-            }
-          : task
-      );
-    }
-    console.log(newTask);
-    setTask(newTask);
-  };
-
   return (
-    <div className="app">
-      <h1>Lista de Tarefas</h1>
-      <Search search={search} setSearch={setSearch} />
-      <Filter filter={filter} setFilter={setFilter} setSort={setSort} />
-      <div className="task-list">
-        {task
-          .filter((task) =>
-            filter === "All"
-              ? true
-              : filter === "Completed"
-              ? task.isCompleted
-              : !task.isCompleted
-          )
-          .filter((task) =>
-            task.text.toLowerCase().includes(search.toLowerCase())
-          )
-          .sort((a, b) =>
-            sort === "Asc"
-              ? a.text.localeCompare(b.text)
-              : b.text.localeCompare(a.text)
-          )
-          .map((task) => (
-            <Task
-              key={task.id}
-              task={task}
-              setTask={setTask}
-              removeTask={removeTask}
-              modal={modal}
-            />
-          ))}
-      </div>
-      <TaskForm addTask={addTask} />
-      <Modal
-        taskCorrent={taskCorrent}
-        isOpen={isModalOpen}
-        onClose={closeModal}
-        completeTask={completeTask}
-      />
-    </div>
+    <Router>
+      <Routes>
+        <Route path="/" element={<Auth />} />
+        <Route path="/Dashboard" element={<Dashboard key={task.id} task={task} setTask={setTask} />} />
+        <Route path="/Admin" element={<DashboardAdmin key={task.id} task={task} setTask={setTask} />} />
+        {/* <Route path="/about" element={<About />} /> */}
+        {/* <Route path="*" element={<NotFound />} /> Rota para páginas não encontradas */}
+      </Routes>
+    </Router>
   );
 }
 

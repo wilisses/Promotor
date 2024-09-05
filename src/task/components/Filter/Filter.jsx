@@ -1,5 +1,5 @@
 import React from 'react'
-import './Filter.css'
+import './style.css'
 const Filter = ({filter, setFilter, setSort}) => {
   return (
     <div className="filter">

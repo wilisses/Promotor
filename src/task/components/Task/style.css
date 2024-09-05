@@ -1,0 +1,91 @@
+.task-list{
+  margin-bottom:20px;
+  padding-bottom: 20px;
+  border-radius: 1px solid #555;
+}
+
+.task {
+  background-color: #fff;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  padding: 10px;
+  margin-bottom: 10px;
+  border-radius: 5px;
+}
+
+.task .title{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  box-sizing: border-box; 
+}
+
+.task-form{
+  padding-bottom: 1.5rem;
+}
+
+input, .TextareaAutosize{
+  padding: 5px;
+  margin-bottom: 10px;
+  border: 1px solid #ddd;
+  border-radius: 3px;
+  width: 100%;
+}
+
+.textInnerHTML{
+  border: 0.1rem solid #e0dada;
+  border-radius: 0.5rem;
+  padding: 0.5rem;
+  overflow: auto;
+  max-height: 20rem;
+}
+.textInnerHTML img{
+  width: 50%;
+  height: 50%;
+}
+
+.content{
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  gap: 1rem;
+}
+.content .group{
+  padding: 1rem;
+  
+}
+
+
+.content .group .title .titleprogress{
+  position: absolute;
+  left: 8rem;
+  display: flex;
+  align-items: start;
+  justify-content: start;
+}
+.content .group .comment{
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  gap: .5rem;
+}
+.content .group .comment .reactQuill{
+  
+  width: 100%;
+}
+
+
+.ql-container {
+  min-height: 10rem; 
+}
+
+.ql-container img{
+  width: 50%;
+}
+
+
+@media (max-width: 768px) {
+  .content .group{
+    padding: 0;
+  }
+}

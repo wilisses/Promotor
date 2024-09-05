@@ -1,5 +1,5 @@
 import React from 'react'
-import './Filter.css'
+import './style.css'
 const Search = ({search, setSearch}) => {
   return (
     <div className='search'>

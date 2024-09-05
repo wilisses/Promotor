@@ -1,0 +1,27 @@
+.auth{
+    position: absolute;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.form form{
+    border: 0.1rem solid #555;
+    padding-inline: 2rem;
+    padding-block: 3rem;
+    border-radius: 0.5rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: .5rem;
+    align-items: center;
+}
+
+form div{
+    display: flex;
+    gap: 0.3rem;
+    flex-direction: column;
+}
