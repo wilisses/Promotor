@@ -1,11 +1,17 @@
-
+import React, {  useEffect } from 'react';
 import TaskForm from "./components/Task/TaskForm";
 import "../App.css";
 import { useNavigate } from 'react-router-dom';
-import {auth} from '../service/firebase'
+import {useData} from '../service/dataContext'
 import { signOut } from 'firebase/auth';
+import {auth} from '../service/firebase';
+
 const Admin = ({task, setTask}) => {
-  
+  const { clientEmployeeData, companyData } = useData();
+  useEffect(() => {
+    console.log(clientEmployeeData, companyData);
+  }, []);
+
   const addTask = (title, text, time, checkboxes) => {
     const newTask = [
       ...task,

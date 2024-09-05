@@ -4,10 +4,13 @@ import {auth, db} from '../service/firebase'
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { ref, onValue } from 'firebase/database';
 import { useNavigate } from 'react-router-dom';
+import { useData } from '../service/dataContext';
+
 const Auth = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [auths, setAuths] = useState([]);
+    const { setClientEmployeeData, setCompanyData } = useData();
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -17,20 +20,22 @@ const Auth = () => {
             const auths = data ? Object.keys(data).map(key => ({ key: key, ...data[key] })) : [];
             setAuths(auths);
             });
-      }, []);
+    }, []);
 
     const handleLogin = async (e) => {
         e.preventDefault();
         try {
             await signInWithEmailAndPassword(auth, email, password);
 
-            const filteredData = auths.filter(item => item.email === email);
-            filteredData.forEach(item => {
-
-                if(item.position === 0){
+            const emailData = auths.filter(emails => emails.email === email);
+            emailData.forEach(positions => {
+                if(positions.position === 0){
+                    const companyData = auths.filter(companys => companys.company == positions.company);
+                    setCompanyData(companyData);
                     navigate('/Admin');
                 } else {
                     navigate('/Dashboard');
+                    
                 }
             });
             
