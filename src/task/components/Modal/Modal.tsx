@@ -22,9 +22,10 @@ const Modal = ({
   const [encerrar, setEncerrar] = useState(false);
   const minLength = 20;
   const clientCurrent = sessionStorage.getItem("client");
+
   const formatDateTime = (dateString) => {
     console.log(dateString);
-    if (dateString === null) {
+    if (dateString === undefined) {
       return "";
     }
     const date = new Date(dateString);
@@ -129,14 +130,17 @@ const Modal = ({
             <p>Titulo: {taskCorrent?.title}</p>
             <p>Início: {formatDateTime(taskCorrent?.timeStart)}</p>
             <p>Termíno: {formatDateTime(taskCorrent?.timeEnd)}</p>
-            <Button
-              variant="contained"
-              onClick={() => completeTask(taskCorrent.id, comment, taskCorrent)}
-            >
-              {taskCorrent.status === 3 || taskCorrent.status === 4
-                ? "Fechar"
-                : status[taskCorrent.status].name}
-            </Button>
+
+            {taskCorrent.status !== 3 && taskCorrent.status !== 4
+                ? (
+                  <Button
+                    variant="contained"
+                    onClick={() => completeTask(taskCorrent.id, comment, taskCorrent)}
+                  >
+                    {status[taskCorrent.status].name}
+                  </Button>
+
+                ):null}
           </div>
         ) : null}
       </div>
