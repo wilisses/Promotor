@@ -4,6 +4,8 @@ import { auth, db } from "../service/firebase";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { ref, onValue } from "firebase/database";
 import { useNavigate } from "react-router-dom";
+import TextField from "@mui/material/TextField";
+import Button from "@mui/material/Button";
 
 const Auth = () => {
   const [email, setEmail] = useState("");
@@ -49,24 +51,31 @@ const Auth = () => {
       <div className="form">
         <form onSubmit={handleLogin}>
           <div>
-            <label htmlFor="Login">Login</label>
-            <input
+            <TextField
+              required
+              id="outlined-required"
+              label="Login"
               type="email"
-              placeholder="Email"
+              defaultValue="Campo Obrigatorio!!!"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
           </div>
           <div>
-            <label htmlFor="Senha">Senha</label>
-            <input
+            <TextField
+              required
+              id="outlined-password-input"
+              label="Senha"
               type="password"
-              placeholder="Senha"
+              autoComplete="current-password"
+              defaultValue="Campo Obrigatorio!!!"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
             />
           </div>
-          <button type="submit">Entrar</button>
+          <Button type="submit" variant="contained">
+            Entrar
+          </Button>
         </form>
       </div>
     </div>

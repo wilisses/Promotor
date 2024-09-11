@@ -11,6 +11,10 @@ import Checkbox from "@mui/material/Checkbox";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import CircularProgressWithLabel from "./Progress";
+import Button from "@mui/material/Button";
+import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc";
+import timezone from "dayjs/plugin/timezone";
 
 const modules = {
   toolbar: [
@@ -59,24 +63,26 @@ const Task = ({
   const [comment, setComment] = useState("");
   const [editComment, setEditComment] = useState("");
 
-  const parseDate = (dateStr) => {
-    const [date, time] = dateStr.split(" ");
-    const [day, month, year] = date.split("/");
-    const [hours, minutes, seconds] = time.split(":");
+  dayjs.extend(utc);
+  dayjs.extend(timezone);
 
-    return new Date(year, month - 1, day, hours, minutes, seconds);
-  };
+  const [remainingTime, setRemainingTime] = useState(() => {
+    return task.time;
+  });
 
-  const [difference, setDifference] = useState(() => {
-    const totalMinutes = Math.floor(task.time / (1000 * 60));
+  const formatTime = (timeInMs) => {
+    if (timeInMs <= 0) {
+      return { minutes: "00", hours: "00" };
+    }
+
+    const totalMinutes = Math.floor(timeInMs / (1000 * 60));
     const totalHours = Math.floor(totalMinutes / 60);
     const remainingMinutes = totalMinutes % 60;
-
     return {
       minutes: remainingMinutes.toString().padStart(2, "0"),
       hours: totalHours.toString().padStart(2, "0"),
     };
-  });
+  };
 
   useEffect(() => {
     let intervalId;
@@ -85,33 +91,13 @@ const Task = ({
 
     if (task.status === 1) {
       intervalId = setInterval(() => {
-        const currentDate = new Date();
+        setRemainingTime((prevRemainingTime) => {
+          if (prevRemainingTime <= 0) {
+            clearInterval(intervalId);
+            return 0;
+          }
 
-        const timeStart = new Date(task.timeStart);
-        const timeDate = new Date(timeStart.getTime() + task.time);
-
-        const options = { timeZone: "America/Sao_Paulo", hour12: false };
-        const newCurrentDate = currentDate
-          .toLocaleString("pt-BR", options)
-          .replaceAll(",", "");
-        const newTimeDate = timeDate
-          .toLocaleString("pt-BR", options)
-          .replaceAll(",", "");
-
-        const date1 = parseDate(newTimeDate);
-        const date2 = parseDate(newCurrentDate);
-        const differenceInMs = date1 - date2;
-
-        const differenceInMinutes = Math.floor(differenceInMs / (1000 * 60))
-          .toString()
-          .padStart(2, "0");
-        const differenceInHours = Math.floor(differenceInMs / (1000 * 60 * 60))
-          .toString()
-          .padStart(2, "0");
-
-        setDifference({
-          minutes: differenceInMinutes,
-          hours: differenceInHours,
+          return prevRemainingTime - 60000;
         });
       }, 60000);
 
@@ -187,21 +173,17 @@ const Task = ({
               >
                 {task.title}
               </p>
-              <button
+              {remainingTime <= 0 ? update() : ""}
+              <Button
+                variant="outlined"
                 className="complete"
                 style={{
-                  background:
-                    task.status === 1
-                      ? status[task.status].cor
-                      : task.status === 4
-                      ? status[task.status].cor
-                      : task.status === 2
-                      ? status[task.status].cor
-                      : task.status === 3
-                      ? status[task.status].cor
-                      : task.status === 0
-                      ? status[task.status].cor
-                      : "",
+                  color: status[task.status] ? status[task.status].cor : "",
+                  borderColor: status[task.status]
+                    ? status[task.status].cor
+                    : "",
+                  borderStyle: "solid",
+                  borderWidth: "1px",
                 }}
                 onClick={(event) => {
                   modal(task.id, task.status);
@@ -209,14 +191,11 @@ const Task = ({
                 }}
               >
                 {task.status === 1
-                  ? `${status[task.status].name} ${difference.hours}h ${
-                      difference.minutes
-                    }min`
+                  ? `${status[task.status].name} 
+                  ${formatTime(remainingTime).hours}h 
+                  ${formatTime(remainingTime).minutes}min`
                   : status[task.status].name}
-                {difference.hours <= "00" && difference.minutes <= "00"
-                  ? update()
-                  : ""}
-              </button>
+              </Button>
             </div>
           </AccordionSummary>
           <AccordionDetails>
@@ -263,8 +242,8 @@ const Task = ({
                       className="reactQuill"
                       value={comment}
                       onChange={setComment}
-                      modules={modules} // Passa a configuração personalizada para os módulos
-                      formats={formats} // Define os formatos permitidos
+                      modules={modules}
+                      formats={formats}
                     />
                     <button type="submit">Salvar</button>
                   </div>

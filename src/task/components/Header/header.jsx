@@ -89,7 +89,6 @@ const Header = ({
   });
 
   const toggleDrawer = (anchor, open) => (event) => {
-    // Mantém o Drawer aberto em certos eventos como Tab ou Shift
     if (
       event.type === "keydown" &&
       (event.key === "Tab" || event.key === "Shift")

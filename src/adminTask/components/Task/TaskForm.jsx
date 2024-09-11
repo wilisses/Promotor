@@ -4,6 +4,7 @@ import "react-quill/dist/quill.snow.css";
 import "./style.css";
 import { db } from "../../../service/firebase";
 import { ref, onValue } from "firebase/database";
+import dayjs from "dayjs";
 
 const modules = {
   toolbar: [
@@ -88,10 +89,15 @@ const TaskForm = ({ addTask, companyData }) => {
       return;
     }
     const [hour, minutes] = time.split(":").map(Number);
-    const milliseconds =
-      Math.floor(hour * (1000 * 60 * 60)) + Math.floor(minutes * (1000 * 60));
 
-    addTask(title, value, milliseconds, checkboxes, promoter, client);
+    const timeInMilliseconds =
+      dayjs()
+        .startOf("day")
+        .add(hour, "hour")
+        .add(minutes, "minute")
+        .valueOf() - dayjs().startOf("day").valueOf();
+
+    addTask(title, value, timeInMilliseconds, checkboxes, promoter, client);
     setTitle("");
     setTime("");
     setValue("");
