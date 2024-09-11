@@ -1,5 +1,5 @@
-.task-list{
-  margin-bottom:20px;
+.task-list {
+  margin-bottom: 20px;
   padding-bottom: 20px;
   border-radius: 1px solid #555;
 }
@@ -12,19 +12,21 @@
   border-radius: 5px;
 }
 
-.task .title{
+.task .title {
   display: flex;
   justify-content: space-between;
   align-items: center;
   width: 100%;
-  box-sizing: border-box; 
+  box-sizing: border-box;
 }
 
-.task-form{
+.task-form {
   padding-bottom: 1.5rem;
 }
 
-input, .TextareaAutosize{
+input,
+.TextareaAutosize,
+select {
   padding: 5px;
   margin-bottom: 10px;
   border: 1px solid #ddd;
@@ -34,5 +36,6 @@ input, .TextareaAutosize{
 
 .ql-toolbar {
   display: flex;
-  flex-wrap: wrap; /* Permite quebra de linha se necessário */
+  flex-wrap: wrap;
+  /* Permite quebra de linha se necessário */
 }

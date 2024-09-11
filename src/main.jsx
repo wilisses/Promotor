@@ -1,9 +1,4 @@
-import { createRoot } from 'react-dom/client';
-import App from './App.jsx';
-import { DataProvider } from './service/dataContext.jsx';
+import { createRoot } from "react-dom/client";
+import App from "./App.jsx";
 
-createRoot(document.getElementById('root')).render(
-  <DataProvider>
-    <App />
-  </DataProvider>
-);
+createRoot(document.getElementById("root")).render(<App />);

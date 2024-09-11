@@ -1,41 +1,51 @@
 import React, { useState } from "react";
-import "./style.css"; 
+import "./style.css";
 import { status } from "../../dashboard";
-const Modal = ({ taskCorrent, isOpen, onClose, completeTask }) => {
+import FormControl from "@mui/material/FormControl";
+import InputLabel from "@mui/material/InputLabel";
+import Select from "@mui/material/Select";
+import MenuItem from "@mui/material/MenuItem";
+const Modal = ({
+  taskCorrent,
+  isOpen,
+  onClose,
+  completeTask,
+  dataClientEmployee,
+  handleTask,
+}) => {
   const [comment, setComment] = useState("");
   const [encerrar, setEncerrar] = useState(false);
   const minLength = 20;
-  
+  const clientCurrent = sessionStorage.getItem("client");
   const formatDateTime = (dateString) => {
     // Converte a string para um objeto Date
-    console.log(dateString)
-    if(dateString === null){
-      return ''
+    console.log(dateString);
+    if (dateString === null) {
+      return "";
     }
     const date = new Date(dateString);
-  
+
     if (!(date instanceof Date)) {
-      return ''
+      return "";
     }
-  
-    const day = date.getDate().toString().padStart(2, '0');
-    const month = (date.getMonth() + 1).toString().padStart(2, '0'); 
+
+    const day = date.getDate().toString().padStart(2, "0");
+    const month = (date.getMonth() + 1).toString().padStart(2, "0");
     const year = date.getFullYear();
-    const hours = date.getHours().toString().padStart(2, '0');
-    const minutes = date.getMinutes().toString().padStart(2, '0');
-    const seconds = date.getSeconds().toString().padStart(2, '0');
-  
+    const hours = date.getHours().toString().padStart(2, "0");
+    const minutes = date.getMinutes().toString().padStart(2, "0");
+    const seconds = date.getSeconds().toString().padStart(2, "0");
+
     return `${day}/${month}/${year} ${hours}:${minutes}:${seconds}`;
   };
-  
-  
-  const handleSubmit = (e) =>{
+
+  const handleSubmit = (e) => {
     e.preventDefault();
-    if( comment.length < minLength ) return;
-    completeTask(taskCorrent.id, comment, taskCorrent)
+    if (comment.length < minLength) return;
+    completeTask(taskCorrent.id, comment, taskCorrent);
     setComment("");
     setEncerrar(false);
-  }
+  };
 
   if (!isOpen) return null;
   return (
@@ -44,20 +54,42 @@ const Modal = ({ taskCorrent, isOpen, onClose, completeTask }) => {
         <button className="modal-close" onClick={onClose}>
           X
         </button>
-
-        {(taskCorrent.status === 1 && (
+        {!clientCurrent ? (
+          <div>
+            <h2>Informe um cliente</h2>
+            <FormControl fullWidth>
+              <InputLabel id="demo-simple-select-label">Cliente</InputLabel>
+              <Select
+                labelId="demo-simple-select-label"
+                id="demo-simple-select"
+                label="Cliente"
+                onChange={(e) => handleTask(e.target.value)}
+                value={clientCurrent}
+              >
+                <MenuItem value="0"></MenuItem>
+                {dataClientEmployee.map((clients) => (
+                  <MenuItem key={clients.key} value={clients.key}>
+                    {clients.name}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          </div>
+        ) : taskCorrent && taskCorrent.status === 1 ? (
           <div>
             <h2>Encerrar Tarefa</h2>
-            <p>{!encerrar? 'Tem certeza que deseja encerrar?': `Informe uma justificativa com pelo menos ${minLength} caracteres!`}</p>
-            
+            <p>
+              {!encerrar
+                ? "Tem certeza que deseja encerrar?"
+                : `Informe uma justificativa com pelo menos ${minLength} caracteres!`}
+            </p>
             <div>
-              {(!encerrar && (
+              {!encerrar ? (
                 <div>
                   <button onClick={() => setEncerrar(true)}>Sim</button>
                   <button onClick={onClose}>Não</button>
                 </div>
-                
-              )) || (
+              ) : (
                 <div>
                   <form onSubmit={handleSubmit}>
                     <input
@@ -67,32 +99,26 @@ const Modal = ({ taskCorrent, isOpen, onClose, completeTask }) => {
                       onChange={(e) => setComment(e.target.value)}
                     />
                     <p className="minLength">{comment.length}</p>
-                    <button
-                      type="submit"
-                    >
-                      Confirmar
-                    </button>
+                    <button type="submit">Confirmar</button>
                   </form>
                 </div>
-              )} 
-              
+              )}
             </div>
           </div>
-        )) || (
-            <div>
-              <p>Titulo: {taskCorrent?.title}</p>
-              <p>Início: {formatDateTime(taskCorrent?.timeStart)}</p>
-              <p>Termíno: {formatDateTime(taskCorrent?.timeEnd)}</p>
-              <button
-                onClick={() => completeTask(taskCorrent.id, comment, taskCorrent)}
-              >
-                {taskCorrent.status === 3 || taskCorrent.status === 4 ?"Fechar":status[taskCorrent.status].name}
-              </button>
-            </div>
-          )}
-
-          
-        
+        ) : taskCorrent ? (
+          <div>
+            <p>Titulo: {taskCorrent?.title}</p>
+            <p>Início: {formatDateTime(taskCorrent?.timeStart)}</p>
+            <p>Termíno: {formatDateTime(taskCorrent?.timeEnd)}</p>
+            <button
+              onClick={() => completeTask(taskCorrent.id, comment, taskCorrent)}
+            >
+              {taskCorrent.status === 3 || taskCorrent.status === 4
+                ? "Fechar"
+                : status[taskCorrent.status].name}
+            </button>
+          </div>
+        ) : null}
       </div>
     </div>
   );
