@@ -1,16 +1,16 @@
 import React, { useState, useEffect } from "react";
 import Task from "./components/Task/Task";
 import "../App.css";
-import Modal from "./Components/Modal/Modal";
+import Modal from "./components/Modal/Modal";
 import Header from "./components/Header/header";
 import { formatDateTime } from "../App";
 import { db } from "../service/firebase";
 import { ref, update, onValue } from "firebase/database";
 import { v4 as uuidv4 } from "uuid";
 
-import Typography from "@mui/material/Typography";
 import Pagination from "@mui/material/Pagination";
 import Stack from "@mui/material/Stack";
+import dayjs from "dayjs";
 
 export const status = {
   0: { name: "Iniciar", cor: "#5cb85c" },
@@ -18,6 +18,7 @@ export const status = {
   2: { name: "Finalizar", cor: "#CD5C5C" },
   3: { name: "Finalizado", cor: "#b8a920" },
   4: { name: "Encerrado", cor: "#DC143C" },
+  5: { name: "Retomar", cor: "#b8a920" },
 };
 
 const ITEMS_PER_PAGE = 4;
@@ -62,8 +63,6 @@ const Dashboard = () => {
 
     newTask.map((updateTask) => {
       if (updateTask.id === id) {
-        console.log(updateTask, "update", id);
-
         update(updateRef, { [id]: updateTask })
           .then(() => {
             console.log("Update successful");
@@ -77,7 +76,6 @@ const Dashboard = () => {
 
   const handleTask = (client) => {
     if (client && client !== "0") {
-      console.log("aqui", client);
       const key = sessionStorage.getItem("key");
       sessionStorage.setItem("client", client);
       const authsRef = ref(db, `tasks/${JSON.parse(key).key}/${client}`);
@@ -93,8 +91,54 @@ const Dashboard = () => {
   const modal = (id, status) => {
     if (status === 0) {
       const currentDate = formatDateTime(new Date());
+
       const newTask = task.map((task) =>
-        task.id === id ? { ...task, status: 1, timeStart: currentDate } : task
+        task.id === id
+          ? {
+              ...task,
+              status: 1,
+              timeStart: currentDate,
+              timeProcessEnd: dayjs(currentDate)
+                .add(task.time, "millisecond")
+                .format("YYYY-MM-DD HH:mm:ss"),
+            }
+          : task
+      );
+
+      setTask(id, newTask);
+    } else if (status === 5) {
+      const currentDate = formatDateTime(new Date());
+
+      const newTask = task.map((task) =>
+        task.id === id
+          ? {
+              ...task,
+              status: 1,
+              timePause: (() => {
+                const keys = Object.keys(task.timePause || {}).length - 1;
+                const timePause = task.timePause || {};
+
+                const updatedTimePause = { ...timePause };
+
+                if (updatedTimePause[keys]) {
+                  updatedTimePause[keys] = {
+                    ...updatedTimePause[keys],
+                    timeEnd: currentDate,
+                  };
+                } else {
+                  updatedTimePause[keys] = {
+                    timeStart: task.timeStart || currentDate,
+                    timeEnd: currentDate,
+                  };
+                }
+
+                return updatedTimePause;
+              })(),
+              timeProcessEnd: dayjs(currentDate)
+                .add(task.time, "millisecond")
+                .format("YYYY-MM-DD HH:mm:ss"),
+            }
+          : task
       );
 
       setTask(id, newTask);
@@ -105,10 +149,10 @@ const Dashboard = () => {
     }
   };
 
-  const completeTask = (id, comment, taskCorrent) => {
+  const completeTask = (id, comment, taskCorrent, encerrarPause) => {
     const currentDate = formatDateTime(new Date());
     let newTask;
-    if (taskCorrent.status === 1 && comment !== "") {
+    if ((taskCorrent.status === 1 && comment !== "", encerrarPause === "1")) {
       newTask = task.map((task) =>
         task.id === id
           ? {
@@ -117,6 +161,30 @@ const Dashboard = () => {
               comment: comment,
               status: 4,
               timeEnd: currentDate,
+              timeProcessEnd: null,
+            }
+          : task
+      );
+      setTask(id, newTask);
+    }
+
+    if ((taskCorrent.status === 1 && comment !== "", encerrarPause === "0")) {
+      newTask = task.map((task) =>
+        task.id === id
+          ? {
+              ...task,
+              status: 5,
+              timePause: {
+                ...task.timePause,
+                [Object.keys(task.timePause || {}).length || 0]: {
+                  timeStart: currentDate,
+                  comment: comment,
+                },
+              },
+              time: dayjs(taskCorrent.timeProcessEnd)
+                .set("second", 0)
+                .diff(dayjs().set("second", 0), "millisecond"),
+              timeProcessEnd: null,
             }
           : task
       );
@@ -132,6 +200,7 @@ const Dashboard = () => {
               comment: comment,
               status: 3,
               timeEnd: currentDate,
+              timeProcessEnd: null,
             }
           : task
       );
@@ -198,7 +267,7 @@ const Dashboard = () => {
     setTask(id, newTask);
   };
 
-  const progressChange = (id) => {
+  const progressChange = () => {
     const newTask = task.map((task) => {
       const lengthTask = task.checkboxes ? task.checkboxes.length : 0;
 
@@ -235,14 +304,11 @@ const Dashboard = () => {
         : b.text.localeCompare(a.text)
     );
 
-  // Calcular o índice inicial e final com base na página atual
   const startIndex = (page - 1) * ITEMS_PER_PAGE;
   const endIndex = startIndex + ITEMS_PER_PAGE;
 
-  // Pegar apenas os itens da página atual
   const paginatedTasks = filteredTasks.slice(startIndex, endIndex);
 
-  // Função para lidar com a mudança de página
   const handleChangePage = (event, value) => {
     setPage(value);
   };
@@ -262,7 +328,7 @@ const Dashboard = () => {
       <div className="app">
         <div className="body">
           <h1>Lista de Tarefas</h1>
-          <div className="task-list">
+          <div >
             <Stack spacing={2}>
               {paginatedTasks.map((task) => (
                 <Task

@@ -9,16 +9,11 @@ body {
 .app {
   margin-top: 5.3em;
   width: 100%;
-  border-radius: 10px;
   display: flex;
-  flex-direction: column;
   justify-content: center;
-  align-items: center;
 }
-
-.body {
-  width: 70vw;
-  padding-inline: 5rem;
+.body{
+  padding-inline: 0.5rem;
 }
 
 h1 {

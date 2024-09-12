@@ -39,3 +39,58 @@ select {
   flex-wrap: wrap;
   /* Permite quebra de linha se necessário */
 }
+
+.FormControl {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-block: 1rem;
+  gap: 1rem;
+}
+.TextFields{
+  display: flex;
+  flex-direction: row;
+  padding-block: 1rem;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+}
+
+.TextFields .title{
+  width: 100%;
+}
+
+.TextFields .duration{
+  width: 10rem;
+}
+.Checklists{
+  display: flex;
+  flex-direction: column;
+  justify-content: start;
+  gap: 1rem;
+}
+.Checklists .title{
+  display: flex;
+  flex-direction: row;
+  justify-content: start;
+  align-items: center;
+  gap: 1rem;
+
+}
+.Checklists .TextFields{
+  display: flex;
+  flex-direction: row;
+  justify-content: start;
+  align-items: center;
+  gap: 0.1rem;
+  padding: 0;
+}
+.textField{
+  width: 100%;
+}
+.Checklists .checkboxes_TextFields{
+
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}

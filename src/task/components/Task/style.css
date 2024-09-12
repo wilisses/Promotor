@@ -33,18 +33,7 @@ input,
   width: 100%;
 }
 
-.textInnerHTML {
-  border: 0.1rem solid #e0dada;
-  border-radius: 0.5rem;
-  padding: 0.5rem;
-  overflow: auto;
-  max-height: 20rem;
-}
 
-.textInnerHTML img {
-  width: 50%;
-  height: 50%;
-}
 
 .content {
   display: flex;
@@ -86,6 +75,56 @@ input,
 
 .ql-container img {
   width: 50%;
+}
+
+.forms{
+  display: flex;
+  gap: 1rem;
+  width: 100%;
+  flex-direction: column;
+  justify-content: center;
+}
+.form{
+  display: flex;
+  justify-content: center;
+  align-items: start;
+  flex-direction: column;
+}
+.form .form_time{
+  font-size: 0.55rem;
+  margin-left: 0.4rem;
+}
+.form .form_textInnerHTML{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: start;
+  width: 100%;
+}
+.form_buttons{
+  display: flex;
+  flex-direction: row;
+  justify-content: start;
+  align-items: start;
+
+}
+.form_textInnerHTML .form_buttons .form_button{
+  padding: 0;
+  font-size: 0.45rem;
+}
+
+.form_textInnerHTML .textInnerHTML {
+  width: 100%;
+  border: 0.1rem solid #e0dada;
+  border-radius: 0.5rem;
+  padding: 0.5rem;
+  overflow: auto;
+  max-height: 20rem;
+}
+
+.textInnerHTML img {
+  width: 50%;
+  height: 50%;
 }
 
 

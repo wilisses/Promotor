@@ -2,16 +2,14 @@ import React, { useEffect, useState } from "react";
 import TaskForm from "./components/Task/TaskForm";
 import "../App.css";
 import { v4 as uuidv4 } from "uuid";
-import { useNavigate } from "react-router-dom";
-import { signOut } from "firebase/auth";
-import { auth, db } from "../service/firebase";
+import { db } from "../service/firebase";
 import { ref, update, onValue } from "firebase/database";
+import Header from "./components/Header/header";
 
-const Admin = ({ task, setTask }) => {
+const Admin = () => {
   const [companyData, setCompanyData] = useState([]);
-
+  const key = JSON.parse(sessionStorage.getItem("key"));
   useEffect(() => {
-    const key = sessionStorage.getItem("key");
     const authsRef = ref(db, "authentication");
     onValue(authsRef, (snapshot) => {
       const data = snapshot.val();
@@ -19,7 +17,7 @@ const Admin = ({ task, setTask }) => {
         ? Object.keys(data).map((key) => ({ key: key, ...data[key] }))
         : [];
       const companyData = auths.filter(
-        (companys) => companys.company === JSON.parse(key).company
+        (companys) => companys.company === key.company
       );
       setCompanyData(companyData);
     });
@@ -43,7 +41,6 @@ const Admin = ({ task, setTask }) => {
 
     const updateRef = ref(db, `tasks/${promoter}/${client}`);
 
-    // Adiciona a nova tarefa ao Firebase
     update(updateRef, { [newTask.id]: newTask })
       .then(() => {
         console.log("Update successful");
@@ -53,25 +50,15 @@ const Admin = ({ task, setTask }) => {
       });
   };
 
-  const navigate = useNavigate();
-
-  const handleLogout = async () => {
-    try {
-      await signOut(auth);
-      sessionStorage.removeItem("client");
-      sessionStorage.removeItem("key");
-      navigate("/"); // Navegar após o logout
-      console.log("Usuário desconectado");
-    } catch (error) {
-      console.error("Erro ao desconectar", error);
-    }
-  };
-
   return (
     <div className="app">
-      <button onClick={handleLogout}>voltar</button>
-      <h1>Criar Tarefas</h1>
-      <TaskForm addTask={addTask} companyData={companyData} />
+      <Header
+        
+      />
+      <div className="body">
+        <h1>Criar Tarefas</h1>
+        <TaskForm addTask={addTask} companyData={companyData} />
+      </div>
     </div>
   );
 };

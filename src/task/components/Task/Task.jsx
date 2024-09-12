@@ -16,6 +16,9 @@ import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 import timezone from "dayjs/plugin/timezone";
 
+import CreateIcon from "@mui/icons-material/Create";
+import IconButton from "@mui/material/IconButton";
+
 const modules = {
   toolbar: [
     [
@@ -62,12 +65,19 @@ const Task = ({
 }) => {
   const [comment, setComment] = useState("");
   const [editComment, setEditComment] = useState("");
-
+  const [editCommentId, setEditCommentId] = useState(null);
   dayjs.extend(utc);
   dayjs.extend(timezone);
 
   const [remainingTime, setRemainingTime] = useState(() => {
-    return task.time;
+    const diffInMilliseconds = dayjs(task.timeProcessEnd)
+      .set("second", 0)
+      .diff(dayjs().set("second", 0), "millisecond");
+    return task.timeProcessEnd === undefined
+      ? task.time
+      : diffInMilliseconds <= 0
+      ? 0
+      : diffInMilliseconds;
   });
 
   const formatTime = (timeInMs) => {
@@ -90,13 +100,18 @@ const Task = ({
     progressChange(task.id);
 
     if (task.status === 1) {
+      const oldDate = dayjs(task.timeProcessEnd);
+      const currentDate = dayjs();
+      if (currentDate.isAfter(oldDate)) {
+        setRemainingTime(0);
+      }
+
       intervalId = setInterval(() => {
         setRemainingTime((prevRemainingTime) => {
           if (prevRemainingTime <= 0) {
             clearInterval(intervalId);
             return 0;
           }
-
           return prevRemainingTime - 60000;
         });
       }, 60000);
@@ -154,6 +169,11 @@ const Task = ({
 
     commentChange(task.id, id, editComment);
     setEditComment("");
+    handleEdit(null);
+  };
+
+  const handleEdit = (id) => {
+    setEditCommentId(id);
   };
 
   return (
@@ -176,7 +196,6 @@ const Task = ({
               {remainingTime <= 0 ? update() : ""}
               <Button
                 variant="outlined"
-                className="complete"
                 style={{
                   color: status[task.status] ? status[task.status].cor : "",
                   borderColor: status[task.status]
@@ -184,6 +203,7 @@ const Task = ({
                     : "",
                   borderStyle: "solid",
                   borderWidth: "1px",
+                  fontSize: "0.60rem",
                 }}
                 onClick={(event) => {
                   modal(task.id, task.status);
@@ -245,31 +265,71 @@ const Task = ({
                       modules={modules}
                       formats={formats}
                     />
-                    <button type="submit">Salvar</button>
+                    <Button type="submit" variant="contained">
+                      Salvar
+                    </Button>
                   </div>
                 </form>
               </div>
+              <div className="comments">
+                {task.comments && (
+                  <div className="group">
+                    <div className="forms">
+                      {task.comments.map((comment) => (
+                        <div key={comment.id}>
+                          <form
+                            className="form"
+                            onSubmit={(e) => handleComment(e, task, comment.id)}
+                          >
+                            <div className="form_time">
+                              {formatDate(comment.date)}
+                            </div>
+                            <div className="form_textInnerHTML">
+                              <div
+                                contentEditable={editCommentId === comment.id}
+                                dangerouslySetInnerHTML={{
+                                  __html: comment.comment,
+                                }}
+                                onInput={(e) => {
+                                  setEditComment(e.target.innerHTML);
+                                }}
+                                className="textInnerHTML"
+                              />
+                              <div className="form_buttons">
+                                {editCommentId === comment.id ? (
+                                  <div>
+                                    <Button
+                                      type="submit"
+                                      className="form_button"
+                                    >
+                                      Salvar
+                                    </Button>
 
-              {task.comments && (
-                <div className="group">
-                  {task.comments.map((comment) => (
-                    <div key={comment.id}>
-                      <form
-                        onSubmit={(e) => handleComment(e, task, comment.id)}
-                      >
-                        <p>{formatDate(comment.date)}</p>
-                        <div
-                          contentEditable
-                          dangerouslySetInnerHTML={{ __html: comment.comment }}
-                          onInput={(e) => setEditComment(e.target.innerHTML)}
-                          className="textInnerHTML"
-                        />
-                        <button type="submit">Salvar</button>
-                      </form>
+                                    <Button
+                                      type="submit"
+                                      className="form_button"
+                                      onClick={() => handleEdit(null)}
+                                    >
+                                      Cancelar
+                                    </Button>
+                                  </div>
+                                ) : (
+                                  <Button
+                                    className="form_button"
+                                    onClick={() => handleEdit(comment.id)}
+                                  >
+                                    Editar
+                                  </Button>
+                                )}
+                              </div>
+                            </div>
+                          </form>
+                        </div>
+                      ))}
                     </div>
-                  ))}
-                </div>
-              )}
+                  </div>
+                )}
+              </div>
             </div>
           </AccordionDetails>
         </Accordion>

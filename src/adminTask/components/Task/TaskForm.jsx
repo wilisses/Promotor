@@ -5,6 +5,16 @@ import "./style.css";
 import { db } from "../../../service/firebase";
 import { ref, onValue } from "firebase/database";
 import dayjs from "dayjs";
+import MenuItem from "@mui/material/MenuItem";
+import InputLabel from "@mui/material/InputLabel";
+import FormControl from "@mui/material/FormControl";
+import Select from "@mui/material/Select";
+import InputMask from "react-input-mask";
+import TextField from "@mui/material/TextField";
+
+import ClearIcon from "@mui/icons-material/Clear";
+import IconButton from "@mui/material/IconButton";
+import Button from "@mui/material/Button";
 
 const modules = {
   toolbar: [
@@ -88,6 +98,7 @@ const TaskForm = ({ addTask, companyData }) => {
       console.error("All fields are required and must be valid.");
       return;
     }
+
     const [hour, minutes] = time.split(":").map(Number);
 
     const timeInMilliseconds =
@@ -101,11 +112,10 @@ const TaskForm = ({ addTask, companyData }) => {
     setTitle("");
     setTime("");
     setValue("");
-    // setPromoter(0);
-    // setClient(0);
     setCheckboxCount(1);
     setCheckboxes([]);
   };
+
   const promoterChange = (event) => {
     setPromoter(event.target.value);
     const authsRef = ref(db, `clientEmployee/${event.target.value}`);
@@ -121,81 +131,119 @@ const TaskForm = ({ addTask, companyData }) => {
   const clientChange = (event) => {
     setClient(event.target.value);
   };
+
   return (
     <div className="task-form">
-      <h2>Criar Tarefa:</h2>
-
       <form onSubmit={handleSubmit}>
-        <label>Promotor</label>
-        <select
-          onChange={promoterChange}
-          placeholder="Promotor"
-          value={promoter}
-        >
-          <option value="0"></option>
-          {companyData
-            .filter((promoter) => promoter.position === 1)
-            .map((promoter) => (
-              <option key={promoter.key} value={promoter.key}>
-                {promoter.name}
-              </option>
-            ))}
-        </select>
-        <label>Cliente</label>
-        <select onChange={clientChange} placeholder="Cliente" value={client}>
-          <option value="0"></option>
-          {dataClientEmployee.map((client) => (
-            <option key={client.key} value={client.key}>
-              {client.name}
-            </option>
-          ))}
-        </select>
-        <label>Titulo</label>
-        <input
-          type="text"
-          placeholder="Digite o título"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-        />
-        <label>Duração</label>
-        <input
-          type="text"
-          placeholder="00:00"
-          value={time}
-          onChange={(e) => setTime(e.target.value)}
-        />
-        <label>Descrição</label>
+        <div className="FormControl">
+          <FormControl fullWidth>
+            <InputLabel id="demo-simple-select-label">Promotor</InputLabel>
+            <Select
+              labelId="demo-simple-select-label"
+              id="demo-simple-select"
+              label="Promotor"
+              onChange={promoterChange}
+              value={promoter}
+            >
+              <MenuItem value="0"></MenuItem>
+              {companyData
+                .filter((promoter) => promoter.position === 1)
+                .map((promoter) => (
+                  <MenuItem key={promoter.key} value={promoter.key}>
+                    {promoter.name}
+                  </MenuItem>
+                ))}
+            </Select>
+          </FormControl>
+
+          <FormControl fullWidth>
+            <InputLabel id="demo-simple-select-label">Cliente</InputLabel>
+            <Select
+              labelId="demo-simple-select-label"
+              id="demo-simple-select"
+              label="Cliente"
+              onChange={clientChange}
+              value={client}
+            >
+              <MenuItem value="0"></MenuItem>
+              {dataClientEmployee.map((clients) => (
+                <MenuItem key={clients.key} value={clients.key}>
+                  {clients.name}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        </div>
+        <div className="TextFields">
+          <TextField
+            id="outlined-basic"
+            className="title"
+            label="Titulo"
+            type="text"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            variant="outlined"
+          />
+          <InputMask
+            mask="99:99"
+            value={time}
+            onChange={(e) => setTime(e.target.value)}
+            maskChar={null}
+          >
+            {(inputProps) => (
+              <TextField {...inputProps} label="Duração" variant="outlined" />
+            )}
+          </InputMask>
+        </div>
+        <h3>Descrição</h3>
         <ReactQuill
           value={value}
           onChange={setValue}
-          modules={modules} // Passa a configuração personalizada para os módulos
-          formats={formats} // Define os formatos permitidos
+          modules={modules}
+          formats={formats}
         />
-        <label>Checklists</label>
-        <button
-          onClick={(e) => {
-            e.preventDefault();
-            addCheckbox();
-          }}
-        >
-          Adicionar Checkbox
-        </button>
-        <br />
-        <br />
-        {checkboxes.map((checkbox) => (
-          <div key={checkbox.id}>
-            <input
-              type="text"
-              name={checkbox.name}
-              checked={checkbox.checked || false}
-              onChange={(e) => handleChange(checkbox.id, e.target.value)}
-            />
-            <button onClick={() => removeCheckbox(checkbox.id)}>X</button>
+        <div className="Checklists">
+          <div className="title">
+            <h3>Checklists</h3>
+            <Button
+              onClick={(e) => {
+                e.preventDefault();
+                addCheckbox();
+              }}
+              variant="contained"
+            >
+              Novo
+            </Button>
           </div>
-        ))}
+          <div className="checkboxes_TextFields">
+            {checkboxes.map((checkbox) => (
+              <div key={checkbox.id} className="TextFields">
+                <TextField
+                  id="outlined-basic"
+                  type="text"
+                  className="textField"
+                  label={`Checklist`}
+                  name={checkbox.name}
+                  value={checkbox.name}
+                  checked={checkbox.ischecked || false}
+                  onChange={(e) => handleChange(checkbox.id, e.target.value)}
+                  variant="outlined"
+                />
+
+                <Button onClick={() => removeCheckbox(checkbox.id)}>
+                  <IconButton>
+                    <ClearIcon />
+                  </IconButton>
+                </Button>
+              </div>
+            ))}
+          </div>
+        </div>
         <br />
         <br />
-        <button type="submit">Criar Tarefas</button>
+        <Button type="submit" variant="contained">
+          Salvar
+        </Button>
       </form>
     </div>
   );
