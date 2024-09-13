@@ -29,7 +29,7 @@ const Geolocation = () => {
       setLocationData({
         lat: null,
         lon: null,
-        error: 'Geolocalização não é suportada pelo seu navegador.'
+        error: 'Geolocalização não é suportada pelo seu navegador...'
       });
     }
   }, []);
