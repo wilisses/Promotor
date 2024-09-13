@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./style.css";
 import Box from "@mui/material/Box";
 import Avatar from "@mui/material/Avatar";
@@ -38,6 +38,8 @@ import { useNavigate } from "react-router-dom";
 import { auth } from "../../../service/firebase";
 import { signOut } from "firebase/auth";
 
+import Autocomplete from "@mui/material/Autocomplete";
+
 const Header = ({
   dataClientEmployee,
   handleTask,
@@ -47,10 +49,9 @@ const Header = ({
   setFilter,
   sort,
   setSort,
+  clientCurrent,
+  keyCurrent,
 }) => {
-  const key = JSON.parse(sessionStorage.getItem("key"));
-  const clientCurrent = sessionStorage.getItem("client");
-
   function stringToColor(string) {
     let hash = 0;
     let i;
@@ -116,7 +117,7 @@ const Header = ({
             <ListItemIcon>
               <PersonIcon fontSize="small" />
             </ListItemIcon>
-            {key.name}
+            {keyCurrent.name}
             <ListItemText />
           </ListItemButton>
         </ListItem>
@@ -127,7 +128,7 @@ const Header = ({
             <ListItemIcon>
               <EmailIcon fontSize="small" />
             </ListItemIcon>
-            {key.email}
+            {keyCurrent.email}
             <ListItemText />
           </ListItemButton>
         </ListItem>
@@ -145,23 +146,27 @@ const Header = ({
       </List>
       <Divider />
       <div className="filter_menu_client">
-        <FormControl fullWidth>
-          <InputLabel id="demo-simple-select-label">Cliente</InputLabel>
-          <Select
-            labelId="demo-simple-select-label"
-            id="demo-simple-select"
-            label="Cliente"
-            onChange={(e) => handleTask(e.target.value)}
-            value={clientCurrent}
-          >
-            <MenuItem value="0"><p></p></MenuItem>
-            {dataClientEmployee.map((clients) => (
-              <MenuItem key={clients.key} value={clients.key}>
-                {clients.name}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
+        <Autocomplete
+          disablePortal
+          options={dataClientEmployee.map((client) => ({
+            label: client.name,
+            key: client.key,
+          }))}
+          value={
+            clientCurrent !== "0"
+              ? dataClientEmployee
+                  .filter((client) => client.key === clientCurrent)
+                  .map((client) => ({
+                    label: client.name,
+                    key: client.key,
+                  }))[0]
+              : null
+          }
+          renderInput={(params) => <TextField {...params} label="Cliente" />}
+          onChange={(event, newValue) => {
+            handleTask(newValue);
+          }}
+        />
       </div>
     </Box>
   );
@@ -172,7 +177,8 @@ const Header = ({
       await signOut(auth);
       sessionStorage.removeItem("client");
       sessionStorage.removeItem("key");
-      navigate("/"); // Navegar após o logout
+      navigate("/");
+      window.location.reload();
       console.log("Usuário desconectado");
     } catch (error) {
       console.error("Erro ao desconectar", error);
@@ -257,7 +263,7 @@ const Header = ({
               aria-haspopup="true"
               aria-expanded={open ? "true" : undefined}
             >
-              <Avatar {...stringAvatar(key.name)} />
+              <Avatar {...stringAvatar(`${keyCurrent.name} `)} />
             </IconButton>
           </Button>
           <Drawer

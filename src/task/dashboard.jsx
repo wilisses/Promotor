@@ -31,20 +31,24 @@ const Dashboard = () => {
   const [taskCorrent, setTaskCorrent] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [dataClientEmployee, setDataClientEmployee] = useState([]);
+  const [keyCurrent, setKeyCurrent] = useState(
+    JSON.parse(sessionStorage.getItem("key"))
+  );
+  const [clientCurrent, setClientCurrent] = useState("0");
 
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
-  const key = JSON.parse(sessionStorage.getItem("key"));
-  const clientCurrent = sessionStorage.getItem("client");
 
   useEffect(() => {
-    if (clientCurrent) {
-      handleTask(clientCurrent);
+    const client = sessionStorage.getItem("client") || "0";
+    setClientCurrent(client);
+
+    if (client !== "0") {
+      handleTask({ key: client });
     } else {
       openModal();
     }
-
-    const authsRef = ref(db, `clientEmployee/${key.key}`);
+    const authsRef = ref(db, `clientEmployee/${keyCurrent.key}`);
     onValue(authsRef, (snapshot) => {
       const data = snapshot.val();
       const clientEmployee = data
@@ -59,7 +63,7 @@ const Dashboard = () => {
     if (id === null) {
       return;
     }
-    const updateRef = ref(db, `tasks/${key.key}/${clientCurrent}`);
+    const updateRef = ref(db, `tasks/${keyCurrent.key}/${clientCurrent}`);
 
     newTask.map((updateTask) => {
       if (updateTask.id === id) {
@@ -76,14 +80,13 @@ const Dashboard = () => {
 
   const handleTask = (client) => {
     if (client && client !== "0") {
-      const key = sessionStorage.getItem("key");
-      sessionStorage.setItem("client", client);
-      const authsRef = ref(db, `tasks/${JSON.parse(key).key}/${client}`);
+      const authsRef = ref(db, `tasks/${keyCurrent.key}/${client.key}`);
       onValue(authsRef, (snapshot) => {
         const data = snapshot.val();
         const taskArray = Object.values(data || {});
         setTask(null, taskArray);
       });
+      sessionStorage.setItem("client", client.key);
     }
     closeModal();
   };
@@ -324,11 +327,13 @@ const Dashboard = () => {
         setFilter={setFilter}
         sort={sort}
         setSort={setSort}
+        clientCurrent={clientCurrent}
+        keyCurrent={keyCurrent}
       />
       <div className="app">
         <div className="body">
           <h1>Lista de Tarefas</h1>
-          <div >
+          <div>
             <Stack spacing={2}>
               {paginatedTasks.map((task) => (
                 <Task
@@ -355,6 +360,7 @@ const Dashboard = () => {
             completeTask={completeTask}
             dataClientEmployee={dataClientEmployee}
             handleTask={handleTask}
+            clientCurrent={clientCurrent}
           />
         </div>
       </div>

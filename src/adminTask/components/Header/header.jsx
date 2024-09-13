@@ -44,7 +44,6 @@ const Header = () => {
   }
 
   function stringAvatar(name) {
-    console.log(name)
     return {
       sx: {
         bgcolor: stringToColor(name),
@@ -126,7 +125,8 @@ const Header = () => {
       await signOut(auth);
       sessionStorage.removeItem("client");
       sessionStorage.removeItem("key");
-      navigate("/"); // Navegar após o logout
+      navigate("/");
+      window.location.reload();
       console.log("Usuário desconectado");
     } catch (error) {
       console.error("Erro ao desconectar", error);

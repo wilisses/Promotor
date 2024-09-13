@@ -36,7 +36,6 @@ const Admin = () => {
       checkboxes,
       progress: 0,
       comments: [],
-      situation: 0,
     };
 
     const updateRef = ref(db, `tasks/${promoter}/${client}`);
@@ -53,7 +52,6 @@ const Admin = () => {
   return (
     <div className="app">
       <Header
-        
       />
       <div className="body">
         <h1>Criar Tarefas</h1>

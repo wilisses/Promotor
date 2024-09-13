@@ -47,6 +47,9 @@ select {
   padding-block: 1rem;
   gap: 1rem;
 }
+.FormControl .Autocomplete{
+  width: 100%;
+}
 .TextFields{
   display: flex;
   flex-direction: row;

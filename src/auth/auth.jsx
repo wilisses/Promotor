@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import "./style.css";
 import { auth, db } from "../service/firebase";
-import { signInWithEmailAndPassword } from "firebase/auth";
+import { signInWithEmailAndPassword, signOut } from "firebase/auth";
 import { ref, onValue } from "firebase/database";
 import { useNavigate } from "react-router-dom";
 import TextField from "@mui/material/TextField";
@@ -14,26 +14,37 @@ const Auth = () => {
 
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const authsRef = ref(db, "authentication");
-    onValue(authsRef, (snapshot) => {
-      const data = snapshot.val();
-      const auths = data
-        ? Object.keys(data).map((key) => ({ key: key, ...data[key] }))
-        : [];
-      setAuths(auths);
-    });
-  }, []);
-
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
+      await signOut(auth);
+      sessionStorage.removeItem("client");
+      sessionStorage.removeItem("key");
+
       await signInWithEmailAndPassword(auth, email, password);
+
+      const auths = await new Promise((resolve, reject) => {
+        const authsRef = ref(db, "authentication");
+        onValue(
+          authsRef,
+          (snapshot) => {
+            const data = snapshot.val();
+            const auths = data
+              ? Object.keys(data).map((key) => ({ key: key, ...data[key] }))
+              : [];
+            resolve(auths);
+          },
+          (error) => {
+            reject(error);
+          }
+        );
+      });
+
+      setAuths(auths);
 
       const emailData = auths.filter((emails) => emails.email === email);
 
       emailData.forEach((positions) => {
-        console.log(positions);
         sessionStorage.setItem("key", JSON.stringify(positions));
         if (positions.position === 0) {
           navigate("/Admin");

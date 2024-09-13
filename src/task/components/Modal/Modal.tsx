@@ -1,15 +1,12 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./style.css";
 import { status } from "../../dashboard";
-import FormControl from "@mui/material/FormControl";
-import InputLabel from "@mui/material/InputLabel";
-import Select from "@mui/material/Select";
-import MenuItem from "@mui/material/MenuItem";
 import Button from "@mui/material/Button";
 import ClearIcon from "@mui/icons-material/Clear";
 import IconButton from "@mui/material/IconButton";
 import TextField from "@mui/material/TextField";
 import dayjs from "dayjs";
+import Autocomplete from "@mui/material/Autocomplete";
 
 const Modal = ({
   taskCorrent,
@@ -18,12 +15,12 @@ const Modal = ({
   completeTask,
   dataClientEmployee,
   handleTask,
+  clientCurrent
 }) => {
   const [comment, setComment] = useState("");
   const [buttons, setButtons] = useState(false);
   const [encerrarPause, setEncerrarPause] = useState("");
   const minLength = 20;
-  const clientCurrent = sessionStorage.getItem("client");
 
   const calculateTotalTime = () => {
     let totalPause = 0;
@@ -141,26 +138,22 @@ const Modal = ({
             </IconButton>
           </Button>
         </div>
-        {!clientCurrent ? (
+        {clientCurrent === "0" ? (
           <div>
             <h2>Informe um cliente</h2>
-            <FormControl fullWidth>
-              <InputLabel id="demo-simple-select-label">Cliente</InputLabel>
-              <Select
-                labelId="demo-simple-select-label"
-                id="demo-simple-select"
-                label="Cliente"
-                onChange={(e) => handleTask(e.target.value)}
-                value={clientCurrent}
-              >
-                <MenuItem value="0"><p></p></MenuItem>
-                {dataClientEmployee.map((clients) => (
-                  <MenuItem key={clients.key} value={clients.key}>
-                    {clients.name}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
+            <Autocomplete
+              disablePortal
+              options={dataClientEmployee.map((client) => ({
+                label: client.name,
+                key: client.key,
+              }))}
+              renderInput={(params) => (
+                <TextField {...params} label="Cliente" />
+              )}
+              onChange={(event, newValue) => {
+                handleTask(newValue);
+              }}
+            />
           </div>
         ) : taskCorrent && taskCorrent.status === 1 ? (
           <div>

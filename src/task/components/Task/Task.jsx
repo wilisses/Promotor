@@ -18,6 +18,7 @@ import timezone from "dayjs/plugin/timezone";
 
 import CreateIcon from "@mui/icons-material/Create";
 import IconButton from "@mui/material/IconButton";
+import TextEditor from "../textEditor/textEditor";
 
 const modules = {
   toolbar: [
@@ -165,9 +166,10 @@ const Task = ({
   };
 
   const handleComment = (e, task, id) => {
+    console.log(e, task, id, editComment);
     e.preventDefault();
-    if(!editComment){
-      return
+    if (!editComment) {
+      return;
     }
     commentChange(task.id, id, editComment);
     setEditComment("");
@@ -224,10 +226,9 @@ const Task = ({
             <div className="content">
               <div className="group">
                 <h3>Descrição</h3>
-                <div
-                  dangerouslySetInnerHTML={{ __html: task.text }}
-                  className="textInnerHTML"
-                />
+                <div className="edit">
+                  <TextEditor htmlContent={task.text} />
+                </div>
               </div>
               {task.checkboxes && task.checkboxes.length > 0 && (
                 <div className="group">
@@ -273,63 +274,58 @@ const Task = ({
                   </div>
                 </form>
               </div>
-                {task.comments && (
-                  <div className="group">
-                    <div className="forms">
-                      {task.comments.map((comment) => (
-                        <div key={comment.id}>
-                          <form
-                            className="form"
-                            onSubmit={(e) => handleComment(e, task, comment.id)}
-                          >
-                            <div className="form_time">
-                              {formatDate(comment.date)}
-                            </div>
-                            <div className="form_textInnerHTML">
-                              <div
+              {task.comments && (
+                <div className="group">
+                  <div className="forms">
+                    {task.comments.map((comment) => (
+                      <div key={comment.id}>
+                        <form
+                          className="form"
+                          onSubmit={(e) => handleComment(e, task, comment.id)}
+                        >
+                          <div className="form_time">
+                            {formatDate(comment.date)}
+                          </div>
+                          <div className="form_textInnerHTML">
+                            <div className="edit">
+                              <TextEditor
+                                htmlContent={comment.comment}
+                                setEditComment={setEditComment}
                                 contentEditable={editCommentId === comment.id}
-                                dangerouslySetInnerHTML={{
-                                  __html: comment.comment,
-                                }}
-                                onInput={(e) => {
-                                  setEditComment(e.target.innerHTML);
-                                }}
-                                className="textInnerHTML"
                               />
-                              <div className="form_buttons">
-                                {editCommentId === comment.id ? (
-                                  <div>
-                                    <Button
-                                      type="submit"
-                                      className="form_button"
-                                    >
-                                      Salvar
-                                    </Button>
-
-                                    <Button
-                                      type="submit"
-                                      className="form_button"
-                                      onClick={() => handleEdit(null)}
-                                    >
-                                      Cancelar
-                                    </Button>
-                                  </div>
-                                ) : (
-                                  <Button
-                                    className="form_button"
-                                    onClick={() => handleEdit(comment.id)}
-                                  >
-                                    Editar
-                                  </Button>
-                                )}
-                              </div>
                             </div>
-                          </form>
-                        </div>
-                      ))}
-                    </div>
+
+                            <div className="form_buttons">
+                              {editCommentId === comment.id ? (
+                                <div>
+                                  <Button type="submit" className="form_button">
+                                    Salvar
+                                  </Button>
+
+                                  <Button
+                                    type="submit"
+                                    className="form_button"
+                                    onClick={() => handleEdit(null)}
+                                  >
+                                    Cancelar
+                                  </Button>
+                                </div>
+                              ) : (
+                                <Button
+                                  className="form_button"
+                                  onClick={() => handleEdit(comment.id)}
+                                >
+                                  Editar
+                                </Button>
+                              )}
+                            </div>
+                          </div>
+                        </form>
+                      </div>
+                    ))}
                   </div>
-                )}
+                </div>
+              )}
             </div>
           </AccordionDetails>
         </Accordion>

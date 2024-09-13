@@ -15,6 +15,7 @@ import TextField from "@mui/material/TextField";
 import ClearIcon from "@mui/icons-material/Clear";
 import IconButton from "@mui/material/IconButton";
 import Button from "@mui/material/Button";
+import Autocomplete from "@mui/material/Autocomplete";
 
 const modules = {
   toolbar: [
@@ -59,8 +60,8 @@ const TaskForm = ({ addTask, companyData }) => {
   const [checkboxes, setCheckboxes] = useState([]);
   const [checkboxCount, setCheckboxCount] = useState(1);
   const [dataClientEmployee, setDataClientEmployee] = useState([]);
-  const [promoter, setPromoter] = useState("");
-  const [client, setClient] = useState("");
+  const [promoter, setPromoter] = useState("0");
+  const [client, setClient] = useState("0");
 
   const addCheckbox = () => {
     setCheckboxes([
@@ -117,63 +118,58 @@ const TaskForm = ({ addTask, companyData }) => {
   };
 
   const promoterChange = (event) => {
-    setPromoter(event.target.value);
-    const authsRef = ref(db, `clientEmployee/${event.target.value}`);
-    onValue(authsRef, (snapshot) => {
-      const data = snapshot.val();
-      const clientEmployee = data
-        ? Object.keys(data).map((key) => ({ key: key, ...data[key] }))
-        : [];
-      setDataClientEmployee(clientEmployee);
-    });
+    if (event !== null) {
+      setPromoter(event.key);
+      const authsRef = ref(db, `clientEmployee/${event.key}`);
+      onValue(authsRef, (snapshot) => {
+        const data = snapshot.val();
+        const clientEmployee = data
+          ? Object.keys(data).map((key) => ({ key: key, ...data[key] }))
+          : [];
+        setDataClientEmployee(clientEmployee);
+      });
+    } else {
+      setPromoter("0");
+    }
   };
 
   const clientChange = (event) => {
-    setClient(event.target.value);
+    if (event !== null) {
+      setClient(event.key);
+    } else {
+      setClient("0");
+    }
   };
 
   return (
     <div className="task-form">
       <form onSubmit={handleSubmit}>
         <div className="FormControl">
-          <FormControl fullWidth>
-            <InputLabel id="demo-simple-select-label">Promotor</InputLabel>
-            <Select
-              labelId="demo-simple-select-label"
-              id="demo-simple-select"
-              label="Promotor"
-              onChange={promoterChange}
-              value={promoter}
-            >
-              <MenuItem value="0"><p></p></MenuItem>
-              {companyData
-                .filter((promoter) => promoter.position === 1)
-                .map((promoter) => (
-                  <MenuItem key={promoter.key} value={promoter.key}>
-                    {promoter.name}
-                  </MenuItem>
-                ))}
-            </Select>
-          </FormControl>
-
-          <FormControl fullWidth>
-            <InputLabel id="demo-simple-select-label">Cliente</InputLabel>
-            <Select
+          <Autocomplete
+            className="Autocomplete"
+            disablePortal
+            options={companyData.map((promoter) => ({
+              label: promoter.name,
+              key: promoter.key,
+            }))}
+            renderInput={(params) => <TextField {...params} label="Promotor" />}
+            onChange={(event, newValue) => {
+              promoterChange(newValue);
+            }}
+          />
+          <Autocomplete
+            className="Autocomplete"
+            disablePortal
             disabled={promoter === "0"}
-              labelId="demo-simple-select-label"
-              id="demo-simple-select"
-              label="Cliente"
-              onChange={clientChange}
-              value={client}
-            >
-              <MenuItem value="0"><p></p></MenuItem>
-              {dataClientEmployee.map((clients) => (
-                <MenuItem key={clients.key} value={clients.key}>
-                  {clients.name}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
+            options={dataClientEmployee.map((clients) => ({
+              label: clients.name,
+              key: clients.key,
+            }))}
+            renderInput={(params) => <TextField {...params} label="Cliente" />}
+            onChange={(event, newValue) => {
+              clientChange(newValue);
+            }}
+          />
         </div>
         <div className="TextFields">
           <TextField
