@@ -1,20 +1,12 @@
-.task-list {
-  margin-bottom: 20px;
-  padding-bottom: 20px;
-  border-radius: 1px solid #555;
-  background-color: #555;
-}
-
-.task {
-  background-color: #fff;
+.tasks {
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  padding: 10px;
+  background-color: white;
   margin-bottom: 10px;
   border-radius: 5px;
-  max-width: 50rem;
+  padding: 1rem;
 }
 
-.task .title {
+.tasks .title {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -35,8 +27,6 @@ input,
   width: 100%;
 }
 
-
-
 .content {
   display: flex;
   justify-content: center;
@@ -56,12 +46,14 @@ input,
   align-items: start;
   justify-content: start;
 }
+
 .edit {
   display: flex;
   justify-content: center;
   flex-direction: column;
   gap: 1rem;
 }
+
 .content .group .comment {
   display: flex;
   flex-direction: column;
@@ -110,9 +102,11 @@ input,
   justify-content: center;
   align-items: start;
 }
-.form .form_textInnerHTML .edit{
+
+.form .form_textInnerHTML .edit {
   width: 100%;
 }
+
 .form_buttons {
   width: 100%;
   display: flex;
@@ -125,25 +119,11 @@ input,
   padding: 0;
   font-size: 0.45rem;
 }
-/* 
-.form_textInnerHTML .textInnerHTML {
-  width: 95%;
-  border: 0.1rem solid #e0dada;
-  border-radius: 0.5rem;
-  padding: .5rem;
-
-  overflow: auto;
-  max-height: 20rem;
-}
-
-.form_textInnerHTML .textInnerHTML img {
-  width: 20%;
-  height: 20%;
-} */
 
 
 @media (max-width: 768px) {
   .content .group {
     padding: 0;
   }
+
 }

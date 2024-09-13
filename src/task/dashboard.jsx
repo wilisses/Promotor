@@ -80,6 +80,7 @@ const Dashboard = () => {
 
   const handleTask = (client) => {
     if (client && client !== "0") {
+      sessionStorage.setItem("client", client.key)
       setClientCurrent(client.key);
       const authsRef = ref(db, `tasks/${keyCurrent.key}/${client.key}`);
       onValue(authsRef, (snapshot) => {
@@ -87,7 +88,6 @@ const Dashboard = () => {
         const taskArray = Object.values(data || {});
         setTask(null, taskArray);
       });
-      
     }
     closeModal();
   };
@@ -334,24 +334,30 @@ const Dashboard = () => {
       <div className="app">
         <div className="body">
           <h1>Lista de Tarefas</h1>
-          <div>
+          <div className="Stack">
             <Stack spacing={2}>
-              {paginatedTasks.map((task) => (
-                <Task
-                  key={task.id}
-                  task={task}
-                  modal={modal}
-                  handleChange={handleChange}
-                  progressChange={progressChange}
-                  commentChange={commentChange}
-                  addComment={addComment}
-                />
-              ))}
-              <Pagination
-                count={Math.ceil(filteredTasks.length / ITEMS_PER_PAGE)} // Total de páginas
-                page={page}
-                onChange={handleChangePage}
-              />
+              <div className="Stack_content">
+                <div>
+                  {paginatedTasks.map((task) => (
+                    <Task
+                      key={task.id}
+                      task={task}
+                      modal={modal}
+                      handleChange={handleChange}
+                      progressChange={progressChange}
+                      commentChange={commentChange}
+                      addComment={addComment}
+                    />
+                  ))}
+                </div>
+                <div>
+                  <Pagination
+                    count={Math.ceil(filteredTasks.length / ITEMS_PER_PAGE)} // Total de páginas
+                    page={page}
+                    onChange={handleChangePage}
+                  />
+                </div>
+              </div>
             </Stack>
           </div>
           <Modal

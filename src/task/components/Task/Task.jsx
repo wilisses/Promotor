@@ -181,8 +181,7 @@ const Task = ({
   };
 
   return (
-    <div className="task">
-      <div>
+    <div className="tasks">
         <Accordion>
           <AccordionSummary
             expandIcon={<ExpandMoreIcon />}
@@ -329,7 +328,6 @@ const Task = ({
             </div>
           </AccordionDetails>
         </Accordion>
-      </div>
     </div>
   );
 };

@@ -55,7 +55,9 @@ const Admin = () => {
       />
       <div className="body">
         <h1>Criar Tarefas</h1>
+        <div className="Stack">
         <TaskForm addTask={addTask} companyData={companyData} />
+        </div>
       </div>
     </div>
   );
