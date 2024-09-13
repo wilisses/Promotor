@@ -39,7 +39,7 @@ import { auth } from "../../../service/firebase";
 import { signOut } from "firebase/auth";
 
 import Autocomplete from "@mui/material/Autocomplete";
-
+import Geolocation from '../../../service/geolocation';
 const Header = ({
   dataClientEmployee,
   handleTask,
@@ -168,6 +168,8 @@ const Header = ({
           }}
         />
       </div>
+      <Divider />
+      <Geolocation/>
     </Box>
   );
   const navigate = useNavigate();

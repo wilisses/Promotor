@@ -21,6 +21,7 @@ import ClearIcon from "@mui/icons-material/Clear";
 import { useNavigate } from "react-router-dom";
 import { auth } from "../../../service/firebase";
 import { signOut } from "firebase/auth";
+import Geolocation from '../../../service/geolocation';
 
 const Header = () => {
   const key = JSON.parse(sessionStorage.getItem("key"));
@@ -116,6 +117,7 @@ const Header = () => {
         </ListItem>
       </List>
       <Divider />
+      <Geolocation/>
     </Box>
   );
   const navigate = useNavigate();
