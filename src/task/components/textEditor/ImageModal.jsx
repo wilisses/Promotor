@@ -8,18 +8,11 @@ const ImageModal = ({ isOpen, onClose, imageSrc }) => {
   if (!isOpen) return null; // Não renderiza o modal se não estiver aberto
 
   return (
-    <div className="modal-overlay" onClick={onClose}>
-      <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-        <div className="modal-close">
-          <Button className="modal-close-button" onClick={onClose}>
-            <IconButton>
-              <ClearIcon />
-            </IconButton>
-          </Button>
-        </div>
-
+    <div className="modal-overlay_edit" onClick={onClose}>
+      <div className="modal-content_edit" onClick={(e) => {onClose(); e.stopPropagation()}} >
+        
         <div
-          className="modal-image"
+          className="modal-image_edit"
           style={{
             width: "100%",
             height: "100vh",

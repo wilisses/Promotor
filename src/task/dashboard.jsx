@@ -80,13 +80,14 @@ const Dashboard = () => {
 
   const handleTask = (client) => {
     if (client && client !== "0") {
+      setClientCurrent(client.key);
       const authsRef = ref(db, `tasks/${keyCurrent.key}/${client.key}`);
       onValue(authsRef, (snapshot) => {
         const data = snapshot.val();
         const taskArray = Object.values(data || {});
         setTask(null, taskArray);
       });
-      sessionStorage.setItem("client", client.key);
+      
     }
     closeModal();
   };
