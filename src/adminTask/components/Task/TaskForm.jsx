@@ -145,7 +145,7 @@ const TaskForm = ({ addTask, companyData }) => {
               onChange={promoterChange}
               value={promoter}
             >
-              <MenuItem value="0"></MenuItem>
+              <MenuItem value="0"><p></p></MenuItem>
               {companyData
                 .filter((promoter) => promoter.position === 1)
                 .map((promoter) => (
@@ -159,13 +159,14 @@ const TaskForm = ({ addTask, companyData }) => {
           <FormControl fullWidth>
             <InputLabel id="demo-simple-select-label">Cliente</InputLabel>
             <Select
+            disabled={promoter === "0"}
               labelId="demo-simple-select-label"
               id="demo-simple-select"
               label="Cliente"
               onChange={clientChange}
               value={client}
             >
-              <MenuItem value="0"></MenuItem>
+              <MenuItem value="0"><p></p></MenuItem>
               {dataClientEmployee.map((clients) => (
                 <MenuItem key={clients.key} value={clients.key}>
                   {clients.name}

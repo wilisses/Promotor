@@ -154,7 +154,7 @@ const Header = ({
             onChange={(e) => handleTask(e.target.value)}
             value={clientCurrent}
           >
-            <MenuItem value="0"></MenuItem>
+            <MenuItem value="0"><p></p></MenuItem>
             {dataClientEmployee.map((clients) => (
               <MenuItem key={clients.key} value={clients.key}>
                 {clients.name}
