@@ -11,7 +11,7 @@
 .form form {
     border: 0.1rem solid #555;
     padding-inline: 2rem;
-    padding-block: 3rem;
+    padding-block: 4rem;
     border-radius: 0.5rem;
     display: flex;
     flex-direction: column;

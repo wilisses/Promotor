@@ -166,7 +166,9 @@ const Task = ({
 
   const handleComment = (e, task, id) => {
     e.preventDefault();
-
+    if(!editComment){
+      return
+    }
     commentChange(task.id, id, editComment);
     setEditComment("");
     handleEdit(null);
@@ -271,7 +273,6 @@ const Task = ({
                   </div>
                 </form>
               </div>
-              <div className="comments">
                 {task.comments && (
                   <div className="group">
                     <div className="forms">
@@ -329,7 +330,6 @@ const Task = ({
                     </div>
                   </div>
                 )}
-              </div>
             </div>
           </AccordionDetails>
         </Accordion>

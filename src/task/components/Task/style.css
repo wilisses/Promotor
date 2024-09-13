@@ -87,26 +87,27 @@ input,
 .form{
   display: flex;
   justify-content: center;
-  align-items: start;
+  align-items: center;
   flex-direction: column;
 }
 .form .form_time{
   font-size: 0.55rem;
-  margin-left: 0.4rem;
+  padding-left: .8rem;
+  width: 100%;
 }
 .form .form_textInnerHTML{
+  width: 100%;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  align-items: start;
-  width: 100%;
+  align-items: center;
 }
 .form_buttons{
+  width: 100%;
   display: flex;
   flex-direction: row;
   justify-content: start;
   align-items: start;
-
 }
 .form_textInnerHTML .form_buttons .form_button{
   padding: 0;
@@ -114,10 +115,11 @@ input,
 }
 
 .form_textInnerHTML .textInnerHTML {
-  width: 100%;
+  width: 95%;
   border: 0.1rem solid #e0dada;
   border-radius: 0.5rem;
-  padding: 0.5rem;
+  padding: .5rem;
+
   overflow: auto;
   max-height: 20rem;
 }
